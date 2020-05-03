@@ -1,21 +1,40 @@
 defmodule UserManagementService.Router do
   use Plug.Router
+  use Timex
+#  import UserManagementService.Repository
+#  import UserManagementService.User
+  alias UserManagementService.Models.User
 
-  import UserManagementService.Repository
-  import UserManagementService.User
+  @skip_token_verification %{jwt_skip: true}
+  @skip_token_verification_view %{view: UserView, jwt_skip: true}
+  @auth_url Application.get_env(:user_management_service, :auth_url)
+  @api_port Application.get_env(:user_management_service, :port)
+  @db_table Application.get_env(:user_management_service, :redb_db)
+  @db_name Application.get_env(:user_management_service, :redb_db)
 
   require Logger
 
   plug(Plug.Logger, log: :debug)
 
   plug(:match)
-
+  plug UserManagementService.AuthPlug
   plug(:dispatch)
 
-  get "/" do
+#  get "/" do
+#    conn
+#    |> put_resp_content_type("application/json")
+#    |> send_resp(200, Poison.encode!(UserManagementService.Repository.get_users()))
+#  end
+
+  get "/" , private: %{view: UserView} do
+    params = Map.get(conn.params, "filter", %{})
+    username = Map.get(params, "q", "")
+
+    {:ok, users} =  User.match("username", username)
+
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, Poison.encode!(UserManagementService.Repository.get_users()))
+    |> send_resp(200, Poison.encode!(users))
   end
 
 

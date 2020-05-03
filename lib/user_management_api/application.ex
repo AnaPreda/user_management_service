@@ -1,5 +1,6 @@
 defmodule UserManagementService.Application do
   use Application
+  import Supervisor.Spec
 
   def start(_type, _args) do
     :ets.new(:my_users, [:bag, :public, :named_table])
@@ -9,7 +10,13 @@ defmodule UserManagementService.Application do
   defp children do
     [
       {Plug.Adapters.Cowboy2, scheme: :http,
-        plug: UserManagementService.Endpoint, options: [port: 4000]}
+        plug: UserManagementService.Endpoint, options: [port: 4000]},
+
+      worker(UserManagementService.DB.Manager, [[
+        name: UserManagementService.DB.Manager,
+        host: Application.get_env(:user_management_service, :redb_host),
+        port: Application.get_env(:user_management_service, :redb_port)
+      ]]),
     ]
   end
 
