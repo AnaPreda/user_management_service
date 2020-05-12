@@ -22,4 +22,5 @@ jobs:
       - run: mix deps.get
       - run: mix do deps.get, compile
       #- run: mix ecto.create
+      
       - run: mix do run --no-halt
