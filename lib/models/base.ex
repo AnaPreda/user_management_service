@@ -1,5 +1,5 @@
 defmodule UserManagementService.Models.Base do
-  alias UserManagementService.DB.Manager
+  alias UserManagementService.DB.Manager, as: Manager
 
   use Timex
 

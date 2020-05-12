@@ -2,6 +2,7 @@ defmodule UserManagementService.Endpoint do
   require Logger
   use Plug.Router
 
+  alias UserManagementService.Models.User, as: User
   alias UserManagementService.Auth
   plug(:match)
 
@@ -16,17 +17,90 @@ defmodule UserManagementService.Endpoint do
   plug UserManagementService.AuthPlug
   plug(:dispatch)
 
+  post "/signup", private: @skip_token_verification do
+    {username, password, email_address, first_name, last_name} = {
+      Map.get(conn.params, "username", nil),
+      Map.get(conn.params, "password", nil),
+      Map.get(conn.params, "email_address", nil),
+      Map.get(conn.params, "first_name", nil),
+      Map.get(conn.params, "last_name", nil)
+    }
+    cond do
+      is_nil(username) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'username' field must be provided"})
+      is_nil(password) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'password' field must be provided"})
+      is_nil(email_address) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'email_address' field must be provided"})
+      is_nil(first_name) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'first_name' field must be provided"})
+      is_nil(last_name) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'last_name' field must be provided"})
+      true ->
+
+        case User.match("username", username) do
+          {:ok, users} ->
+            case users != [] do
+              true ->
+                conn
+                |> put_resp_content_type("application/json")
+                |> send_resp(200, Poison.encode!(%{"error" => "User already registered"}))
+              false ->
+                hash_password = Bcrypt.hash_pwd_salt(password)
+                case %User{
+                       id: nil,
+                       username: username,
+                       password: hash_password,
+                       email_address: email_address,
+                       first_name: first_name,
+                       last_name: last_name,
+                       staff_status: false
+                     } |> User.save do
+                  {:ok, new_user}->
+                    conn
+                    |> put_resp_content_type("application/json")
+                    |> send_resp(201, Poison.encode!(%{:data => new_user}))
+                  :error ->
+                    conn
+                    |> put_resp_content_type("application/json")
+                    |> send_resp(500, Poison.encode!(%{"error" => "An unexpected error happened"}))
+                end
+            end
+
+          :error ->
+            conn
+            |> put_resp_content_type("application/json")
+            |> send_resp(500, Poison.encode!(%{"error" => "An unexpected error happened"}))
+        end
+
+
+    end
+  end
+
   post "/login", private: @skip_token_verification do
     {username, password} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil)
     }
-
-    flag = case username == "admin" and password == "admin"  do
-      true ->
-        {:ok, auth_service} = UserManagementService.Auth.start_link
-
-        case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
+    case User.match("username", username) do
+      {:ok, users} ->
+       case users != [] do
+        true ->
+        user = List.first(users)
+        case Bcrypt.verify_pass(password, user.password) do
+          true ->
+          {:ok, auth_service} = UserManagementService.Auth.start_link
+          case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
           token ->
             conn
             |> put_resp_content_type("application/json")
@@ -35,13 +109,78 @@ defmodule UserManagementService.Endpoint do
             conn
             |> put_resp_content_type("application/json")
             |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
-        end
-      false ->
+            end
+
+          false ->
+            conn
+            |> put_resp_content_type("application/json")
+            |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+            end
+        false ->
+           conn
+           |> put_resp_content_type("application/json")
+           |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+      end
+
+      :error ->
         conn
         |> put_resp_content_type("application/json")
-        |> send_resp(401, Poison.encode!(%{:message => "departamentul microsoft -> neatorizat!"}))
-
+        |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
     end
+#    user =  User.match("username", username)
+#    user =  UserManagementService.Repository.get_user(username, password)
+#    cond do
+#      is_nil(user) ->
+#        conn
+#       |> put_status(400)
+#       |> assign(:jsonapi, %{"error" => "Login failed"})
+#       |> send_resp(400,  Poison.encode!(%{"error" => "Login failed"}))
+#      true ->
+##        case verify_pass(password, user.password_hash) do
+##          true ->  {:ok,token, full_claims} = User.Plug.Token.encode_and_sign(user)
+##                   conn
+##                   |> put_resp_content_type("application/json")
+##                   |> send_resp(200,  Poison.encode!(%{"token" => token}))
+#        {:ok, auth_service} = UserManagementService.Auth.start_link
+#
+#         case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
+#         token ->
+#            conn
+#            |> put_resp_content_type("application/json")
+#            |> send_resp(200, Poison.encode!(%{:token => token}))
+#         :error ->
+#            conn
+#            |> put_resp_content_type("application/json")
+#            |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
+#         end
+#       false ->
+#          conn
+#          |> put_resp_content_type("application/json")
+#          |> send_resp(401, Poison.encode!(%{:message => "departamentul microsoft -> neatorizat!"}))
+##     end
+#    end
+
+
+#    flag = case username == "admin" and password == "admin"  do
+#      true ->
+#        {:ok, auth_service} = UserManagementService.Auth.start_link
+#
+#        case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
+#          token ->
+#            conn
+#            |> put_resp_content_type("application/json")
+#            |> send_resp(200, Poison.encode!(%{:token => token}))
+#          :error ->
+#            |> put_resp_content_type("application/json")
+#            |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
+#        end
+#      false ->
+#        conn
+#        |> put_resp_content_type("application/json")
+#        |> send_resp(401, Poison.encode!(%{:message => "departamentul microsoft -> neatorizat!"}))
+#    end
+
+
   end
 
   forward("/users", to: UserManagementService.Router)

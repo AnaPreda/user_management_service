@@ -3,7 +3,7 @@ defmodule UserManagementService.Router do
   use Timex
 #  import UserManagementService.Repository
 #  import UserManagementService.User
-  alias UserManagementService.Models.User
+  alias UserManagementService.Models.User, as: User
 
   @skip_token_verification %{jwt_skip: true}
   @skip_token_verification_view %{view: UserView, jwt_skip: true}
@@ -20,22 +20,22 @@ defmodule UserManagementService.Router do
   plug UserManagementService.AuthPlug
   plug(:dispatch)
 
-#  get "/" do
-#    conn
-#    |> put_resp_content_type("application/json")
-#    |> send_resp(200, Poison.encode!(UserManagementService.Repository.get_users()))
-#  end
-
-  get "/" , private: %{view: UserView} do
-    params = Map.get(conn.params, "filter", %{})
-    username = Map.get(params, "q", "")
-
-    {:ok, users} =  User.match("username", username)
-
+  get "/" do
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, Poison.encode!(users))
+    |> send_resp(200, Poison.encode!(%{"error" => "in get/"}))
   end
+
+#  get "/" , private: %{view: UserView} do
+#    params = Map.get(conn.params, "filter", %{})
+#    username = Map.get(params, "q", "")
+#
+#    {:ok, users} =  User.match("username", username)
+#
+#    conn
+#    |> put_resp_content_type("application/json")
+#    |> send_resp(200, Poison.encode!(users))
+#  end
 
 
 #  get "/name" do
@@ -47,39 +47,69 @@ defmodule UserManagementService.Router do
 #    |> send_resp(200, Poison.encode!(Doggos.Repository.get_dog_by_name(name)))
 #  end
 #
-#  post "/" do
-#    {name, age,id} = {
-#      Map.get(conn.params, "name", nil),
-#      Map.get(conn.params, "age", nil),
-#      Map.get(conn.params, "id", nil)
-#    }
-#
-#    cond do
-#      is_nil(name) ->
-#        conn
-#        |> put_status(400)
-#        |> assign(:jsonapi, %{"error" => "'name' field must be provided"})
-#      is_nil(age) ->
-#        conn
-#        |> put_status(400)
-#        |> assign(:jsonapi, %{"error" => "'age' field must be provided"})
-#      is_nil(id) ->
-#        conn
-#        |> put_status(400)
-#        |> assign(:jsonapi, %{"error" => "'id' field must be provided"})
-#      true ->
-#        Doggos.Repository.add_dog(%Doggos.Dog{
-#          name: name,
-#          age: age,
-#          id: id,
+  post "/" do
+    {username, password, email_address, first_name, last_name} = {
+      Map.get(conn.params, "username", nil),
+      Map.get(conn.params, "password", nil),
+      Map.get(conn.params, "email_address", nil),
+      Map.get(conn.params, "first_name", nil),
+      Map.get(conn.params, "last_name", nil)
+    }
+
+    cond do
+      is_nil(username) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'username' field must be provided"})
+      is_nil(password) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'password' field must be provided"})
+      is_nil(email_address) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'email_address' field must be provided"})
+      is_nil(first_name) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'first_name' field must be provided"})
+      is_nil(last_name) ->
+        conn
+        |> put_status(400)
+        |> assign(:jsonapi, %{"error" => "'last_name' field must be provided"})
+      true ->
+        case %User{
+          username: username,
+          password: password,
+          email_address: email_address,
+          first_name: first_name,
+          last_name: last_name
+        } |> User.save do
+          {:ok, new_user}->
+          conn
+          |> put_resp_content_type("application/json")
+          |> send_resp(201, Poison.encode!(%{:data => new_user}))
+          :error ->
+            conn
+            |> put_resp_content_type("application/json")
+            |> send_resp(500, Poison.encode!(%{"error" => "An unexpected error happened"}))
+          end
+#        UserManagementService.Repository.add_user(%UserManagementService.Models.User{
+#        username: username,
+#        password: password,
+#        email_address: email_address,
+#        first_name: first_name,
+#        last_name: last_name
 #        })
 #        conn
 #        |> put_resp_content_type("application/json")
-#        |> send_resp(201, Poison.encode!(%{:data => %Doggos.Dog{
-#          name: name,
-#          age: age,
-#          id: id
+#        |> send_resp(201, Poison.encode!(%{:data => %UserManagementService.Models.User{
+#         username: username,
+#         password: password,
+#         email_address: email_address,
+#         first_name: first_name,
+#         last_name: last_name
 #        }}))
-#    end
-#  end
+    end
+  end
 end
