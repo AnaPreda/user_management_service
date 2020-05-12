@@ -16,7 +16,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-
+      - run: mix local.hex --force  # install Hex locally (without prompt)
       # specify any bash command here prefixed with `run: `
       - run: mix deps.get
       - run: mix do deps.get, compile
