@@ -47,7 +47,7 @@ jobs:
     steps:
       - checkout
       - aws-s3/sync:
-          from: bucket
+          from: 'D:\Workspace\Microservicii'
           to: 's3://elixirmyblogbucket/'
           arguments: | # Optional arguments
             --acl public-read \
