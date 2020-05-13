@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="rethinkdb" type="mix">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/_build/dev/lib/rethinkdb/ebin" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/deps/rethinkdb/lib" />
+    </SOURCES>
+  </library>
+</component>

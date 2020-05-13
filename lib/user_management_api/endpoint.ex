@@ -127,59 +127,6 @@ defmodule UserManagementService.Endpoint do
         |> put_resp_content_type("application/json")
         |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
     end
-#    user =  User.match("username", username)
-#    user =  UserManagementService.Repository.get_user(username, password)
-#    cond do
-#      is_nil(user) ->
-#        conn
-#       |> put_status(400)
-#       |> assign(:jsonapi, %{"error" => "Login failed"})
-#       |> send_resp(400,  Poison.encode!(%{"error" => "Login failed"}))
-#      true ->
-##        case verify_pass(password, user.password_hash) do
-##          true ->  {:ok,token, full_claims} = User.Plug.Token.encode_and_sign(user)
-##                   conn
-##                   |> put_resp_content_type("application/json")
-##                   |> send_resp(200,  Poison.encode!(%{"token" => token}))
-#        {:ok, auth_service} = UserManagementService.Auth.start_link
-#
-#         case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
-#         token ->
-#            conn
-#            |> put_resp_content_type("application/json")
-#            |> send_resp(200, Poison.encode!(%{:token => token}))
-#         :error ->
-#            conn
-#            |> put_resp_content_type("application/json")
-#            |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
-#         end
-#       false ->
-#          conn
-#          |> put_resp_content_type("application/json")
-#          |> send_resp(401, Poison.encode!(%{:message => "departamentul microsoft -> neatorizat!"}))
-##     end
-#    end
-
-
-#    flag = case username == "admin" and password == "admin"  do
-#      true ->
-#        {:ok, auth_service} = UserManagementService.Auth.start_link
-#
-#        case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
-#          token ->
-#            conn
-#            |> put_resp_content_type("application/json")
-#            |> send_resp(200, Poison.encode!(%{:token => token}))
-#          :error ->
-#            |> put_resp_content_type("application/json")
-#            |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
-#        end
-#      false ->
-#        conn
-#        |> put_resp_content_type("application/json")
-#        |> send_resp(401, Poison.encode!(%{:message => "departamentul microsoft -> neatorizat!"}))
-#    end
-
 
   end
 
