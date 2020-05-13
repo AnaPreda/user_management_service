@@ -40,14 +40,14 @@ jobs:
              --cache-control "max-age=86400"
            overwrite: true # default is false
            
- workflows: # Define a Workflow running the build job, then the deploy job
-   version: 2
-   build-deploy:
-     jobs:
-       - build
-       - deploy:
-           requires:
-             - build
-           filters:
-             branches:
-               only: master
+#  workflows: # Define a Workflow running the build job, then the deploy job
+#    version: 2
+#    build-deploy:
+#      jobs:
+#        - build
+#        - deploy:
+#            requires:
+#              - build
+#            filters:
+#              branches:
+#                only: master
