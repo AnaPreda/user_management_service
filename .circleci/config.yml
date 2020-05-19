@@ -46,6 +46,8 @@ jobs:
       - image: rethinkdb:2.3.6
     steps:
       - checkout
+      - run: pwd
+      - run: ls
       - aws-s3/sync:
           from: '/home/circleci/repo'
           to: 's3://elixirmyblogbucket/'
