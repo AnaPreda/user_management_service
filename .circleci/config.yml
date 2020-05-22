@@ -42,13 +42,20 @@ jobs:
       #- run: mix ecto.create
       - run: mix do run
 
-deployment:
-  staging:
-    branch: master
-    codedeploy:
-      user_management_service:
-        application_root: /
-        region: us-west-2
+deploy:
+  docker:
+    - image: circleci/python:3.6.4
+
+  working_directory: ~/repo
+
+  steps:
+    - checkout
+    - run:
+        command: |
+          sudo pip install gigalixir
+          gigalixir login --email "ana20bianca@gmail.com" --password "0269588218"
+          git push gigalixir master
+
 #  deploy:
 #    docker: # Use the Docker executor for the deploy job
 #      - image: circleci/elixir:1.10.3
