@@ -50,11 +50,9 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          command: |
-            yes | sudo pip install gigalixir
-            gigalixir login --email "ana20bianca@gmail.com" --password "0269588218"
-            git push gigalixir master
+      - run: yes | sudo pip install gigalixir
+      - run: gigalixir login --email "ana20bianca@gmail.com" --password "0269588218"
+      - run: git push gigalixir master
 
 #  deploy:
 #    docker: # Use the Docker executor for the deploy job
