@@ -52,7 +52,7 @@ jobs:
       - checkout
       - run:
           command: |
-            Y | sudo pip install gigalixir
+            yes | sudo pip install gigalixir
             gigalixir login --email "ana20bianca@gmail.com" --password "0269588218"
             git push gigalixir master
 
