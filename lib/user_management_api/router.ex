@@ -47,53 +47,55 @@ defmodule UserManagementService.Router do
 #    |> send_resp(200, Poison.encode!(Doggos.Repository.get_dog_by_name(name)))
 #  end
 #
-  post "/" do
-    {username, password, email_address, first_name, last_name} = {
-      Map.get(conn.params, "username", nil),
-      Map.get(conn.params, "password", nil),
-      Map.get(conn.params, "email_address", nil),
-      Map.get(conn.params, "first_name", nil),
-      Map.get(conn.params, "last_name", nil)
-    }
+#  post "/" do
+#    {username, password, email_address, first_name, last_name} = {
+#      Map.get(conn.params, "username", nil),
+#      Map.get(conn.params, "password", nil),
+#      Map.get(conn.params, "email_address", nil),
+#      Map.get(conn.params, "first_name", nil),
+#      Map.get(conn.params, "last_name", nil)
+#    }
+#
+#    cond do
+#      is_nil(username) ->
+#        conn
+#        |> put_status(400)
+#        |> assign(:jsonapi, %{"error" => "'username' field must be provided"})
+#      is_nil(password) ->
+#        conn
+#        |> put_status(400)
+#        |> assign(:jsonapi, %{"error" => "'password' field must be provided"})
+#      is_nil(email_address) ->
+#        conn
+#        |> put_status(400)
+#        |> assign(:jsonapi, %{"error" => "'email_address' field must be provided"})
+#      is_nil(first_name) ->
+#        conn
+#        |> put_status(400)
+#        |> assign(:jsonapi, %{"error" => "'first_name' field must be provided"})
+#      is_nil(last_name) ->
+#        conn
+#        |> put_status(400)
+#        |> assign(:jsonapi, %{"error" => "'last_name' field must be provided"})
+#      true ->
+#        case %User{
+#          username: username,
+#          password: password,
+#          email_address: email_address,
+#          first_name: first_name,
+#          last_name: last_name
+#        } |> User.save do
+#          {:ok, new_user}->
+#          conn
+#          |> put_resp_content_type("application/json")
+#          |> send_resp(201, Poison.encode!(%{:data => new_user}))
+#          :error ->
+#            conn
+#            |> put_resp_content_type("application/json")
+#            |> send_resp(500, Poison.encode!(%{"error" => "An unexpected error happened"}))
+#          end
 
-    cond do
-      is_nil(username) ->
-        conn
-        |> put_status(400)
-        |> assign(:jsonapi, %{"error" => "'username' field must be provided"})
-      is_nil(password) ->
-        conn
-        |> put_status(400)
-        |> assign(:jsonapi, %{"error" => "'password' field must be provided"})
-      is_nil(email_address) ->
-        conn
-        |> put_status(400)
-        |> assign(:jsonapi, %{"error" => "'email_address' field must be provided"})
-      is_nil(first_name) ->
-        conn
-        |> put_status(400)
-        |> assign(:jsonapi, %{"error" => "'first_name' field must be provided"})
-      is_nil(last_name) ->
-        conn
-        |> put_status(400)
-        |> assign(:jsonapi, %{"error" => "'last_name' field must be provided"})
-      true ->
-        case %User{
-          username: username,
-          password: password,
-          email_address: email_address,
-          first_name: first_name,
-          last_name: last_name
-        } |> User.save do
-          {:ok, new_user}->
-          conn
-          |> put_resp_content_type("application/json")
-          |> send_resp(201, Poison.encode!(%{:data => new_user}))
-          :error ->
-            conn
-            |> put_resp_content_type("application/json")
-            |> send_resp(500, Poison.encode!(%{"error" => "An unexpected error happened"}))
-          end
+
 #        UserManagementService.Repository.add_user(%UserManagementService.Models.User{
 #        username: username,
 #        password: password,
@@ -110,6 +112,7 @@ defmodule UserManagementService.Router do
 #         first_name: first_name,
 #         last_name: last_name
 #        }}))
-    end
-  end
+
+#    end
+#  end
 end

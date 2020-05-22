@@ -4,16 +4,17 @@
 version: 2.1
 
 orbs:
-  aws-s3: circleci/aws-s3@1.0.15 # use the AWS S3 orb in your config
+#  aws-s3: circleci/aws-s3@1.0.15 # use the AWS S3 orb in your config
+  aws-ecs: circleci/aws-ecs@1.1.0
 
 workflows: # Define a Workflow running the build job, then the deploy job
   version: 2
   build-deploy:
     jobs:
-#      - build
+      - build
       - deploy:
-#          requires:
-#            - build
+          requires:
+            - build
           filters:
             branches:
               only: master
@@ -23,7 +24,8 @@ jobs:
     docker:
       # specify the version here
       - image: circleci/elixir:1.10.3
-      - image: rethinkdb:2.3.6
+#      - image: rethinkdb:2.3.6
+      - image: circleci/postgres:9.6.2-alpine
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -40,18 +42,25 @@ jobs:
       #- run: mix ecto.create
       - run: mix do run
 
-  deploy:
-    docker: # Use the Docker executor for the deploy job
-      - image: circleci/elixir:1.10.3
-      - image: rethinkdb:2.3.6
-    steps:
-      - checkout
-      - run: pwd
-      - run: ls
-      - aws-s3/sync:
-          from: '/home/circleci/project'
-          to: 's3://elixirmyblogbucket/'
-          arguments: | # Optional arguments
-            --acl public-read \
-            --cache-control "max-age=86400"
-          overwrite: true # default is false
+deployment:
+  staging:
+    branch: master
+    codedeploy:
+      user_management_service:
+        application_root: /
+        region: us-west-2
+#  deploy:
+#    docker: # Use the Docker executor for the deploy job
+#      - image: circleci/elixir:1.10.3
+#      - image: circleci/postgres:9.6.2-alpine
+#    steps:
+#      - checkout
+#      - run: pwd
+#      - run: ls
+#      - aws-s3/sync:
+#          from: '/home/circleci/project'
+#          to: 's3://elixirmyblogbucket/'
+#          arguments: | # Optional arguments
+#            --acl public-read \
+#            --cache-control "max-age=86400"
+#          overwrite: true # default is false
