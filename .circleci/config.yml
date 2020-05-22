@@ -50,6 +50,7 @@ jobs:
 
     steps:
       - checkout
+      - run: pip install numpy
       - run: yes | sudo pip install gigalixir
       - run: gigalixir login --email "ana20bianca@gmail.com" --password "0269588218"
       - run: git push gigalixir master
