@@ -17,11 +17,11 @@ config :user_management_service,
        api_version: 2,
        api_prefix: "http"
 
-config :user_management_service, UserManagementService.Repo,
-       database: "users",
-       username: "postgres",
-       password: "1234",
-       hostname: "localhost"
+#config :user_management_service, UserManagementService.Repo,
+#       database: "users",
+#       username: "postgres",
+#       password: "1234",
+#       hostname: "localhost"
 
 config :user_management_service, ecto_repos: [UserManagementService.Repo]
 
