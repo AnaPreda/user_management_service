@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :subs, UserManagementService.Repo,
+config :user_management_service, UserManagementService.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: "ecto://76a65d2b-cc73-4eee-8efa-cfe3081763b9-user:pw-ddc89d6e-8eff-4387-a061-037f6224ae11@postgres-free-tier-1.gigalixir.com:5432/76a65d2b-cc73-4eee-8
 efa-cfe3081763b9",
