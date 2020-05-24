@@ -1,45 +1,32 @@
 defmodule UserManagementService.Endpoint do
+#  use Phoenix.Endpoint, otp_app: :user_management_service
   require Logger
+
   use Plug.Router
 
 #  alias UserManagementService.Models.User, as: User
   alias UserManagementService.User, as: User
   alias UserManagementService.Repo, as: Repo
   alias UserManagementService.Auth, as: Auth
-  plug(:match)
 
   @skip_token_verification %{jwt_skip: true}
-
+  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
     pass: ["application/json"],
     json_decoder: Poison
   )
 
-  plug CORSPlug, origin: "*"
-
-
-#  pipeline :api do
-#    plug CORSPlug, origin: "*"
-#    plug :accepts, ["json"]
-#  end
-
-#  scope "/api", UserManagementService do
-#    pipe_through :api
-#
-##    resources "/", UserManagementService.Endpoint
-##    options   "/signup", UserManagementService.Endpoint, :signup
-##    options   "/articles/:id", ArticleController, :options
-#
-#    post "/signup", UserManagementService.Endpoint, :signup
-#    post "/login", UserManagementService.Endpoint, :login
-#  end
-
+#  plug UserManagementService.Router
 
 #  plug UserManagementService.AuthPlug
-  plug(:dispatch)
+
 #  , private: @skip_token_verification
-    post "/signup"do
+
+  plug(:match)
+  plug(:dispatch)
+
+    post "/signup" do
     {username, password, email_address, first_name, last_name} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil),

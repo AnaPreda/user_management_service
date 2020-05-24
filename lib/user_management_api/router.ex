@@ -16,8 +16,14 @@ defmodule UserManagementService.Router do
 
   plug(Plug.Logger, log: :debug)
 
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Poison
+  )
+
   plug(:match)
-  plug UserManagementService.AuthPlug
+#  plug UserManagementService.AuthPlug
   plug(:dispatch)
 
 
