@@ -24,3 +24,5 @@ config :user_management_service, UserManagementService.Repo,
        hostname: "localhost"
 
 config :user_management_service, ecto_repos: [UserManagementService.Repo]
+
+import_config "#{Mix.env()}.exs"
