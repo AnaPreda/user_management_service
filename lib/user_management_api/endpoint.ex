@@ -10,7 +10,7 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.Auth, as: Auth
 
   @skip_token_verification %{jwt_skip: true}
-  plug Corsica, max_age: 600, origins: "*", expose_headers: ~w(X-Foo)
+  plug Corsica, origins: "*", allow_headers: :all, expose_headers: ~w(X-Foo), allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
 #  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
@@ -127,6 +127,13 @@ defmodule UserManagementService.Endpoint do
         |> send_resp(400, Poison.encode!(%{:message => "token was not deleted"}))
     end
   end
+
+  get "/" do
+    user = Repo.get(User, "admin")
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Poison.encode!(%{:user => user}))
+    end
 
 
   forward("/users", to: UserManagementService.Router)
