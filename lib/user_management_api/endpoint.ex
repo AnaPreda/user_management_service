@@ -109,6 +109,47 @@ defmodule UserManagementService.Endpoint do
     end
   end
 
+
+  post "/login", private: @skip_token_verification do
+    {username, password} = {
+      Map.get(conn.params, "username", nil),
+      Map.get(conn.params, "password", nil)
+    }
+    user = Repo.get(User, username)
+    case is_nil(user) do
+          false ->
+            case Bcrypt.verify_pass(password, user.password) do
+              true ->
+                {:ok, auth_service} = UserManagementService.Auth.start_link
+                case UserManagementService.Auth.issue_token(auth_service, %{:id => username}) do
+                  token ->
+                    conn
+                    |> put_resp_content_type("application/json")
+                    |> send_resp(200, Poison.encode!(%{:token => token}))
+                  :error ->
+                    conn
+                    |> put_resp_content_type("application/json")
+                    |> send_resp(400, Poison.encode!(%{:message => "token already issued"}))
+                end
+              false ->
+                conn
+                |> put_resp_content_type("application/json")
+                |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+            end
+          true ->
+            conn
+            |> put_resp_content_type("application/json")
+            |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+        end
+
+#      :error ->
+#        conn
+#        |> put_resp_content_type("application/json")
+#        |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+    end
+
+#  end
+  #
 #  post "/login", private: @skip_token_verification do
 #    {username, password} = {
 #      Map.get(conn.params, "username", nil),
