@@ -10,7 +10,8 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.Auth, as: Auth
 
   @skip_token_verification %{jwt_skip: true}
-  plug(Corsica, origins: "*", allow_header: :all)
+  plug Corsica, max_age: 600, origins: "*", expose_headers: ~w(X-Foo)
+#  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
     pass: ["application/json"],
