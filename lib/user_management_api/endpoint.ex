@@ -80,7 +80,7 @@ defmodule UserManagementService.Endpoint do
   end
 
 #  , private: @skip_token_verification
-  post "/login" do
+  get "/login" do
     {username, password} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil)
@@ -115,7 +115,7 @@ defmodule UserManagementService.Endpoint do
 #  , private: @skip_token_verification
   post "/logout" do
     username = Map.get(conn.params, "username", nil)
-
+    IO.inspect(conn)
     case Auth.revoke_token(conn.assigns.auth_service, %{:id => username}) do
       :ok ->
         conn
