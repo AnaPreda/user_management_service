@@ -12,9 +12,9 @@ defmodule UserManagementService.Auth do
   @app_secret_key Application.get_env(:user_management_service, :app_secret_key)
   @jwt_validity Application.get_env(:user_management_service, :jwt_validity)
 #  @issuer Path.join([
-#    Application.get_env(:users, :api_host),
-#    Application.get_env(:users, :api_version),
-#    Application.get_env(:users, :api_prefix)
+#    Application.get_env(:user_management_service, :api_host),
+#    Application.get_env(:user_management_service, :api_version),
+#    Application.get_env(:user_management_service, :api_prefix)
 #  ])
 
   # Client API

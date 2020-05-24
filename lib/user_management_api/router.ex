@@ -3,14 +3,14 @@ defmodule UserManagementService.Router do
   use Timex
 #  import UserManagementService.Repository
 #  import UserManagementService.User
-  alias UserManagementService.Models.User, as: User
+#  alias UserManagementService.Models.User, as: User
 
   @skip_token_verification %{jwt_skip: true}
   @skip_token_verification_view %{view: UserView, jwt_skip: true}
   @auth_url Application.get_env(:user_management_service, :auth_url)
   @api_port Application.get_env(:user_management_service, :port)
-  @db_table Application.get_env(:user_management_service, :redb_db)
-  @db_name Application.get_env(:user_management_service, :redb_db)
+#  @db_table Application.get_env(:user_management_service, :redb_db)
+#  @db_name Application.get_env(:user_management_service, :redb_db)
 
   require Logger
 
@@ -19,6 +19,8 @@ defmodule UserManagementService.Router do
   plug(:match)
   plug UserManagementService.AuthPlug
   plug(:dispatch)
+
+
 
   get "/" do
     conn

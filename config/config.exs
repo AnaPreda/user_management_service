@@ -23,6 +23,10 @@ config :user_management_service,
 #       password: "1234",
 #       hostname: "localhost"
 
+config :cors_plug,
+       origin: "*",
+       methods: ["GET", "POST"]
+
 config :user_management_service, ecto_repos: [UserManagementService.Repo]
 
 import_config "#{Mix.env()}.exs"

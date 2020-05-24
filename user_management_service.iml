@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/combine" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/comeonin" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/connection" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/cors_plug" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/cowboy" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/cowlib" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/db_connection" />
@@ -102,5 +103,7 @@
     <orderEntry type="library" name="phoenix_ecto" level="project" />
     <orderEntry type="library" name="phoenix_html" level="project" />
     <orderEntry type="library" name="ecto" level="project" />
+    <orderEntry type="library" name="cors_plug" level="project" />
+    <orderEntry type="library" name="mix_test_watch" level="project" />
   </component>
 </module>
