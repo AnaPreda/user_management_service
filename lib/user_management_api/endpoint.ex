@@ -10,7 +10,7 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.Auth, as: Auth
 
   @skip_token_verification %{jwt_skip: true}
-  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, expose_headers: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
+  plug Corsica, origins: "http://localhost:3000", allow_headers: ["Access-Control-Allow-Origin"], allow_methods: :all, expose_headers: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
 #  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
