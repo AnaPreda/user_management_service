@@ -10,7 +10,7 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.Auth, as: Auth
   plug(:match)
   @skip_token_verification %{jwt_skip: true}
-  plug CORSPlug, origin: "*", headers: ["Access-Control-Allow-Origin", "Authorization", "Content-Type", "Accept", "Origin", "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken", "Keep-Alive", "X-Requested-With", "If-Modified-Since", "X-CSRF-Token"]
+  plug CORSPlug, origin: "*", credentials: true, methods: ["POST", "PUT", "DELETE", "GET", "PATCH", "OPTIONS"], headers: [ "Authorization", "Content-Type", "Accept", "Origin", "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken", "Keep-Alive", "X-Requested-With", "If-Modified-Since", "X-CSRF-Token"], expose: ['Link, X-RateLimit-Reset, X-RateLimit-Limit, X-RateLimit-Remaining, X-Request-Id']
 
 
   #  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
@@ -68,6 +68,7 @@ defmodule UserManagementService.Endpoint do
                  {:ok, new_user}->
                   conn
                  |> put_resp_content_type("application/json")
+                 |> put_req_header("header", "Access-Control-Allow-Origin")
                  |> send_resp(201, Poison.encode!(%{:data => new_user}))
                  :error ->
                  conn
