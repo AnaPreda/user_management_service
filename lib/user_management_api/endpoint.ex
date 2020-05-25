@@ -10,7 +10,10 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.Auth, as: Auth
 
   @skip_token_verification %{jwt_skip: true}
-  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
+  plug CORSPlug, origin: "*"
+
+
+  #  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
 #  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
@@ -64,7 +67,6 @@ defmodule UserManagementService.Endpoint do
              case User.create(%{"username" => username, "password" => hash_password, "email_address" => email_address}) do
                  {:ok, new_user}->
                   conn
-                 |> put_cors_simple_resp_headers(origins: "*", allow_credentials: true, allow_headers: :all)
                  |> put_resp_content_type("application/json")
                  |> send_resp(201, Poison.encode!(%{:data => new_user}))
                  :error ->

@@ -41,7 +41,7 @@ defmodule UserManagementService.MixProject do
       {:bcrypt_elixir, "~> 1.0"},
       {:joken, "~> 1.1", override: true},
       {:ecto_sql, "~> 3.2"},
-      {:cors_plug, "~> 2.0"},
+      {:cors_plug, "~> 1.5"},
       {:postgrex, "~> 0.15"},
        {:corsica, "~> 1.1.3"}
       # {:dep_from_hexpm, "~> 0.3.0"},
