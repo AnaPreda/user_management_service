@@ -80,7 +80,7 @@ defmodule UserManagementService.Endpoint do
   end
 
 #  , private: @skip_token_verification
-  get "/login" do
+  post "/login" do
     {username, password} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil)
@@ -104,7 +104,7 @@ defmodule UserManagementService.Endpoint do
               false ->
                 conn
                 |> put_resp_content_type("application/json")
-                |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+                |> send_resp(401, Poison.encode!(%{:unauthorized => "Invalid user or password"}))
             end
           true ->
             conn
