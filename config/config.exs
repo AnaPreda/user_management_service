@@ -35,6 +35,8 @@ config :user_management_service, UserManagementService.Endpoint,
 #config :cors_plug,
 #       origin: "*",
 #       methods: ["GET", "POST"]
+config :cors_plug,
+       send_preflight_response?: true
 
 config :user_management_service, ecto_repos: [UserManagementService.Repo]
 

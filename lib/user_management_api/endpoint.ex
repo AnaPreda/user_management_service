@@ -8,9 +8,9 @@ defmodule UserManagementService.Endpoint do
   alias UserManagementService.User, as: User
   alias UserManagementService.Repo, as: Repo
   alias UserManagementService.Auth, as: Auth
-
+  plug(:match)
   @skip_token_verification %{jwt_skip: true}
-  plug CORSPlug, origin: "*"
+  plug CORSPlug, origin: "*", headers: ["Access-Control-Allow-Origin", "Authorization", "Content-Type", "Accept", "Origin", "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken", "Keep-Alive", "X-Requested-With", "If-Modified-Since", "X-CSRF-Token"]
 
 
   #  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
@@ -27,7 +27,7 @@ defmodule UserManagementService.Endpoint do
 
 #  , private: @skip_token_verification
 
-  plug(:match)
+
   plug(:dispatch)
 
     post "/signup" do

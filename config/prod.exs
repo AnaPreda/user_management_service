@@ -14,6 +14,8 @@ config :user_management_service, UserManagementService.Endpoint,
        secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
        server: true
 
+config :cors_plug,
+       send_preflight_response?: true
 
 
 #config :subs_web, SubsWeb.Endpoint,
