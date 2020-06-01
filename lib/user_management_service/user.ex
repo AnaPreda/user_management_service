@@ -12,7 +12,7 @@ defmodule UserManagementService.User do
     field :last_name, :string
     field :staff_status, :integer, default: 1
 
-    timestamps
+    timestamps()
   end
 
   @fields ~w(username password email_address first_name last_name staff_status)a
@@ -25,13 +25,6 @@ defmodule UserManagementService.User do
 
   def create(params) do
     cs = changeset(%User{}, params)
-#         |> validate_item_count(params)
-#         |> put_assoc(:invoice_items, get_items(params))
-
-#    if cs.valid? do
       Repo.insert(cs)
-#    else
-#      cs
-#    end
   end
 end

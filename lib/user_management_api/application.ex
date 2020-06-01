@@ -13,6 +13,7 @@ defmodule UserManagementService.Application do
         plug: UserManagementService.Endpoint, options: [port: 4000]},
 
       UserManagementService.Repo,
+#      worker(UserManagementService.Service.Publisher, app_id: :user_management_service)
 #      worker(UserManagementService.DB.Manager, [[
 #        name: UserManagementService.DB.Manager,
 #        host: Application.get_env(:user_management_service, :redb_host),
