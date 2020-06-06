@@ -32,7 +32,7 @@ defmodule UserManagementService.Endpoint do
 
   plug(:dispatch)
 
-    post "/signup" do
+    post "/signup", private: @skip_token_verification do
     {username, password, email_address, first_name, last_name} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil),
@@ -87,7 +87,7 @@ defmodule UserManagementService.Endpoint do
   end
 
 #  , private: @skip_token_verification
-  post "/login" do
+  post "/login", private: @skip_token_verification do
     {username, password} = {
       Map.get(conn.params, "username", nil),
       Map.get(conn.params, "password", nil)
@@ -122,8 +122,8 @@ defmodule UserManagementService.Endpoint do
 #  , private: @skip_token_verification
   post "/logout" do
     username = Map.get(conn.params, "username", nil)
-    IO.inspect(conn)
-    case Auth.revoke_token(conn.assigns.auth_service, %{:id => username}) do
+    {:ok, service} = Auth.start_link
+    case Auth.revoke_token(service, %{:id => username}) do
       :ok ->
         conn
         |> put_resp_content_type("application/json")
@@ -142,6 +142,22 @@ defmodule UserManagementService.Endpoint do
     |> send_resp(200, Poison.encode!(%{:user => user}))
     end
 
+  post "/validate-token", private: @skip_token_verification do
+    token = Map.get(conn.params, "token", nil)
+    Logger.debug inspect(token)
+
+    {:ok, service} = Auth.start_link
+    case Auth.validate_token(service, token) do
+      {:ok, _} ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(200, Poison.encode!(%{:message => "token is valid"}))
+      {:error, _} ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(400, Poison.encode!(%{:message => "token is invalid"}))
+    end
+  end
 
   forward("/users", to: UserManagementService.Router)
 
