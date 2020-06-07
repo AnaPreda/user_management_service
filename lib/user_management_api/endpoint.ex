@@ -66,10 +66,12 @@ defmodule UserManagementService.Endpoint do
         case  is_nil(user) do
              true ->
              hash_password = Bcrypt.hash_pwd_salt(password)
-             case User.create(%{"username" => username, "password" => hash_password, "email_address" => email_address, "first_name" => first_name, "last_name" => last_name}) do
+#             case User.create(%{"username" => username, "password" => hash_password, "email_address" => email_address, "first_name" => first_name, "last_name" => last_name}) do
+             case User.create(%{"username" => username, "password" => hash_password}) do
                  {:ok, new_user}->
-                   Publisher.publish(
-                     new_user |> Map.take([:username, :email_address, :first_name, :last_name]))
+#                   Publisher.publish(
+#                     new_user |> Map.take([:username, :email_address, :first_name, :last_name]))
+                   Publisher.publish(%{"username" => username,"email_address" => email_address, "first_name" => first_name, "last_name" => last_name})
                    conn
                    |> put_resp_content_type("application/json")
                    |> send_resp(201, Poison.encode!(%{:data => new_user}))

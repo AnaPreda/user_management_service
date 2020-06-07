@@ -7,20 +7,22 @@ defmodule UserManagementService.User do
 #  @derive {Phoenix.Param, key: :username}
   schema "users" do
     field :password, :string
-    field :email_address, :string
-    field :first_name, :string
-    field :last_name, :string
-    field :staff_status, :integer, default: 1
+#    field :email_address, :string
+#    field :first_name, :string
+#    field :last_name, :string
+#    field :staff_status, :integer, default: 1
 
     timestamps()
   end
 
-  @fields ~w(username password email_address first_name last_name staff_status)a
+#  @fields ~w(username password email_address first_name last_name staff_status)a
+  @fields ~w(username password)a
 
   def changeset(data, params \\ %{}) do
     data
     |> cast(params, @fields)
-    |> validate_required([:username, :password, :email_address])
+#    |> validate_required([:username, :password, :email_address])
+    |> validate_required([:username, :password])
   end
 
   def create(params) do
