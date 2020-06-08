@@ -68,7 +68,7 @@ defmodule UserManagementService.Endpoint do
              false ->
                conn
                |> put_resp_content_type("application/json")
-               |> send_resp(200, Poison.encode!(%{"error" => "User already registered"}))
+               |> send_resp(400, Poison.encode!(%{"error" => "User already registered"}))
              end
     end
   end
