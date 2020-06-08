@@ -1,34 +1,22 @@
 defmodule UserManagementService.Endpoint do
-#  use Phoenix.Endpoint, otp_app: :user_management_service
   require Logger
-
   use Plug.Router
 
-#  alias UserManagementService.Models.User, as: User
   alias UserManagementService.User, as: User
   alias UserManagementService.Repo, as: Repo
   alias UserManagementService.Auth, as: Auth
   alias UserManagementService.Service.Publisher, as: Publisher
+
   plug(:match)
   @skip_token_verification %{jwt_skip: true}
   @routing_keys Application.get_env(:user_management_service, :routing_keys)
   plug CORSPlug, origin: "*", credentials: true, methods: ["POST", "PUT", "DELETE", "GET", "PATCH", "OPTIONS"], headers: [ "Authorization", "Content-Type", "Accept", "Origin", "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken", "Keep-Alive", "X-Requested-With", "If-Modified-Since", "X-CSRF-Token"], expose: ['Link, X-RateLimit-Reset, X-RateLimit-Limit, X-RateLimit-Remaining, X-Request-Id']
 
-
-  #  plug Corsica, origins: "*", allow_headers: :all, allow_methods: :all, allow_credentials: true, log: [rejected: :error, invalid: :warn, accepted: :debug]
-#  plug(Corsica, origins: "*", allow_header: :all)
   plug(Plug.Parsers,
     parsers: [:json],
     pass: ["application/json"],
     json_decoder: Poison
   )
-
-#  plug UserManagementService.Router
-
-#  plug UserManagementService.AuthPlug
-
-#  , private: @skip_token_verification
-
 
   plug(:dispatch)
 
@@ -66,11 +54,8 @@ defmodule UserManagementService.Endpoint do
         case  is_nil(user) do
              true ->
              hash_password = Bcrypt.hash_pwd_salt(password)
-#             case User.create(%{"username" => username, "password" => hash_password, "email_address" => email_address, "first_name" => first_name, "last_name" => last_name}) do
              case User.create(%{"username" => username, "password" => hash_password}) do
                  {:ok, new_user}->
-#                   Publisher.publish(
-#                     new_user |> Map.take([:username, :email_address, :first_name, :last_name]))
                    Publisher.publish(%{"username" => username,"email_address" => email_address, "first_name" => first_name, "last_name" => last_name})
                    conn
                    |> put_resp_content_type("application/json")
@@ -88,7 +73,7 @@ defmodule UserManagementService.Endpoint do
     end
   end
 
-#  , private: @skip_token_verification
+
   post "/login", private: @skip_token_verification do
     {username, password} = {
       Map.get(conn.params, "username", nil),
@@ -118,10 +103,10 @@ defmodule UserManagementService.Endpoint do
           true ->
             conn
             |> put_resp_content_type("application/json")
-            |> send_resp(200, Poison.encode!(%{"error" => "'user' not found"}))
+            |> send_resp(401, Poison.encode!(%{:unauthorized => "'user' not found"}))
         end
     end
-#  , private: @skip_token_verification
+
   post "/logout" do
     username = Map.get(conn.params, "username", nil)
     {:ok, service} = Auth.start_link
@@ -136,13 +121,6 @@ defmodule UserManagementService.Endpoint do
         |> send_resp(400, Poison.encode!(%{:message => "token was not deleted"}))
     end
   end
-
-  get "/" do
-    user = Repo.get(User, "admin")
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Poison.encode!(%{:user => user}))
-    end
 
   post "/validate-token", private: @skip_token_verification do
     token = Map.get(conn.params, "token", nil)
@@ -161,15 +139,13 @@ defmodule UserManagementService.Endpoint do
     end
   end
 
-  delete "/admin/delete_all" do
-    #    Repo.all(from post in Post, where: post.author == ^author)
-    Repo.delete_all(User)
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Poison.encode!(%{:message => "deleted"}))
-  end
+#  delete "/admin/delete_all" do
+#    Repo.delete_all(User)
+#    conn
+#    |> put_resp_content_type("application/json")
+#    |> send_resp(200, Poison.encode!(%{:message => "deleted"}))
+#  end
 
-  forward("/users", to: UserManagementService.Router)
 
   match _ do
     send_resp(conn, 404, "Page not found!")

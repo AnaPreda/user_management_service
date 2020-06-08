@@ -4,7 +4,6 @@ defmodule UserManagementService.Service.Publisher do
 
   require Poison
 
-
   def publish(payload, options \\ []) do
     {:ok, connection} = AMQP.Connection.open("amqp://mljuxpih:gOWXSg5I0ibDw8Df1-zt24I7959uJYjb@roedeer.rmq.cloudamqp.com/mljuxpih")
     {:ok, channel} = AMQP.Channel.open(connection)
