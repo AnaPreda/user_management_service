@@ -161,6 +161,14 @@ defmodule UserManagementService.Endpoint do
     end
   end
 
+  delete "/admin/delete_all" do
+    #    Repo.all(from post in Post, where: post.author == ^author)
+    Repo.delete_all(User)
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Poison.encode!(%{:message => "deleted"}))
+  end
+
   forward("/users", to: UserManagementService.Router)
 
   match _ do
